@@ -18,11 +18,16 @@ grunt.loadNpmTasks('grunt-vagrantup');
 ```
 
 ## Notes
-This task does not install or configure Vagrant for you, it merely aids in spinning up and shutting down your Vagrant boxes on demand.  For installation and configuration of Vagrant, see https://www.vagrantup.com/.
+This task does not install or configure Vagrant for you, it merely aids in spinning up and shutting down your Vagrant boxes on demand.  For installation and configuration of Vagrant, see https://www.vagrantup.com.
 
 ## Tasks
 
 `vagrantup` is intended for use in two different modes:
+* **Synchronous mode**, where the Vagrant box remains up only to support other Grunt tasks and is shut down once those tasks have completed.
+* **Keepalive mode**, where the Vagrant box remains up indefinitely until the task process is cancelled.
+
+### Synchronous mode
+This is the default mode for `vagrantup`.  It is designed to support a workflow where a Vagrant box needs to be set up for automated testing and then disposed of.  
 
 
 ## Contributing
