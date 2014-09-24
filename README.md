@@ -48,6 +48,51 @@ In order to provide full control over the Vagrant lifecycle, `vagrantup` also ex
 grunt.registerMultiTask('testWithVagrant', ['vagrantup:testing', 'runTests', 'vagranthalt']);
 ```
 
+### Keepalive Mode
+
+If the `keepalive` option is set to `true`, the `vagrantup` task will keep the Vagrant box up until the task process is explicitly killed by the user.  This mode is designed to support a workflow where the Vagrant environment is used for active development.  The task configuration accepts the same options as Synchronous Mode:
+
+```js
+vagrantup: {
+  development: {
+    options: {
+      keepalive: true,
+      // Set up your development environment, symlink the files to a directory shared with Vagrant...
+      setup: ['setupTaskThree', 'setupTaskFour:target'],
+      // Clean out the shared directory...
+      teardown: ['teardownTask']
+    }
+  }
+}
+```
+
+In this mode, there is no need for the `vagranthalt` task, the tear down routine will run when the task process is killed.  Setting up the development environment can be accomplised with `grunt vagrantup:development`.
+
+Keepalive Mode can also be enabled ad-hoc with a flag: `grunt vagrantup:testing:keepalive`
+
+Task-level options can be used to share configuration between Synchronous Mode targets and Keepalive Mode targets:
+
+```js
+vagrantup: {
+  options: {
+    // Clean out the shared directory...
+    teardown: ['teardownTask']
+  },
+  testing: {
+    options: {
+      // Run your production build routine, copy the files to a directory shared with Vagrant...
+      setup: ['setupTaskOne', 'setupTaskTwo:target']
+    }
+  },
+  development: {
+    options: {
+      keepalive: true,
+      // Set up your development environment, symlink the files to a directory shared with Vagrant...
+      setup: ['setupTaskThree', 'setupTaskFour:target']
+    }
+  }
+}
+```
 
 ## Contributing
 In lieu of a formal styleguide, take care to maintain the existing coding style. Add unit tests for any new or changed functionality. Lint and test your code using [Grunt](http://gruntjs.com/).
