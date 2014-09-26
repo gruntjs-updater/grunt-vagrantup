@@ -14,6 +14,7 @@ var shutdownManager = require('node-shutdown-manager'),
 module.exports = function(grunt) {
 
     var performSetup = function(tasks, callback) {
+        callback = callback || function() {};
         var vagrantCallback = (tasks && tasks.length > 0) ?
                 function() {
                     grunt.util.spawn(
