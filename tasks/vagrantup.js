@@ -1,6 +1,6 @@
 /*
  * grunt-vagrantup
- * https://github.com/sfishel/grunt-vagrantup
+ * https://github.com/sfishel18/grunt-vagrantup
  *
  * Copyright (c) 2014 Simon Fishel
  * Licensed under the MIT license.
@@ -14,20 +14,21 @@ var shutdownManager = require('node-shutdown-manager'),
 module.exports = function(grunt) {
 
     var performSetup = function(tasks, callback) {
-        if(tasks && tasks.length > 0) {
-            grunt.util.spawn(
-                {
-                    cmd: 'grunt',
-                    grunt: true,
-                    args: tasks,
-                    opts: { stdio: 'inherit' }
-                },
-                vagrantUp.bind(null, callback)
-            );
-        }
-        else {
-            vagrantUp(callback);
-        }
+        var vagrantCallback = (tasks && tasks.length > 0) ?
+                function() {
+                    grunt.util.spawn(
+                        {
+                            cmd: 'grunt',
+                            grunt: true,
+                            args: tasks,
+                            opts: { stdio: 'inherit' }
+                        },
+                        callback
+                    )
+                } :
+                callback;
+
+        vagrantUp(vagrantCallback);
     };
 
     var vagrantUp = function(callback) {
