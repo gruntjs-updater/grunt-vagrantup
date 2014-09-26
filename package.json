@@ -40,6 +40,7 @@
   ],
   "dependencies": {
     "node-shutdown-manager": "^0.1.2",
+    "pad-stdio": "^1.0.0",
     "q": "^1.0.1"
   }
 }

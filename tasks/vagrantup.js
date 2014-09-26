@@ -9,7 +9,8 @@
 'use strict';
 
 var shutdownManager = require('node-shutdown-manager'),
-    q = require('q');
+    q = require('q'),
+    padStdio = require('pad-stdio');
 
 module.exports = function(grunt) {
 
@@ -17,14 +18,22 @@ module.exports = function(grunt) {
         callback = callback || function() {};
         var vagrantCallback = (tasks && tasks.length > 0) ?
                 function() {
+                    grunt.log.writeln().writeln('Running Vagrant setup tasks...').writeln();
+                    padStdio.stdout('    ');
                     grunt.util.spawn(
                         {
-                            cmd: 'grunt',
                             grunt: true,
-                            args: tasks,
-                            opts: { stdio: 'inherit' }
+                            args: tasks
                         },
-                        callback
+                        function(err, result, code) {
+                            if (err || code > 0) {
+                                grunt.error(result.stderr || result.stdout);
+                                return;
+                            }
+                            grunt.log.writeln('\n' + result.stdout);
+                            padStdio.stdout();
+                            callback();
+                        }
                     )
                 } :
                 callback;
@@ -46,14 +55,23 @@ module.exports = function(grunt) {
 
     var performTeardown = function(tasks, callback) {
         if(tasks && tasks.length > 0) {
+            grunt.log.writeln().writeln('Running Vagrant teardown tasks...').writeln();
+            padStdio.stdout('    ');
             grunt.util.spawn(
                 {
-                    cmd: 'grunt',
                     grunt: true,
-                    args: tasks,
-                    opts: { stdio: 'inherit' }
+                    args: tasks
                 },
-                vagrantHalt.bind(null, callback)
+                function(err, result, code) {
+                    if (err || code > 0) {
+                        grunt.error(result.stderr || result.stdout);
+                        return;
+                    }
+                    grunt.log.writeln('\n' + result.stdout);
+                    padStdio.stdout();
+                    grunt.log.writeln();
+                    vagrantHalt(callback);
+                }
             );
         }
         else {
@@ -99,7 +117,9 @@ module.exports = function(grunt) {
         var keepAlive = options.keepalive || this.flags.keepalive;
         if(keepAlive) {
             process.stdin.resume();
-            performSetup(options.setup);
+            performSetup(options.setup, function() {
+                grunt.log.writeln().writeln('Setup complete. Waiting...').writeln();
+            });
             setupExitHandlers(options.teardown, done);
         }
         else {
