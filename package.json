@@ -1,7 +1,7 @@
 {
   "name": "grunt-vagrantup",
   "description": "Manages starting up and shutting down your Vagrant boxes as part of your Grunt development and testing workflow.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "homepage": "https://github.com/sfishel18/grunt-vagrantup",
   "author": {
     "name": "Simon Fishel",
